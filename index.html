@@ -1,0 +1,220 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>react bootcamp</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+    <div id="app"></div>
+    
+
+    <script type="text/babel">
+    // A COMPONENT IS A FUNCTION OR A CLASS WICH ACCEPTS
+    // AN INPUT AND RETURN A REACT ELEMENT
+    /*
+        NOTATIONS:
+            * A COMPONENT IS A FUNCTION OR A CLASS WICH ACCEPTS
+            AN INPUT AND RETURN A REACT ELEMENT
+
+            * WHEN YOU WANT TO MANAGE THE STATE OF A COMPONENT
+            YOU NEED TO USE CLASS COMPONENT
+
+    */
+        const name = 'jose'
+        const handle = '@joseptessele'
+
+        function NameComponent(props){
+            return <h1>{props.name}</h1>
+            // return React.createElement(
+            //     'h1',
+            //     null,
+            //     props.name
+            // )
+        }
+
+        function HandleComponent(props){
+            return <h3>{props.handler}</h3>
+            // React.createElement(
+            //     'h3',
+            //     null,
+            //     props.handler
+            // )
+        }
+
+
+
+
+        function FriendsList(props){
+            return(
+                <div>
+                    <h1>Active Friends</h1>
+                    <ul>
+                        {props.list.map((name) =>(
+                            <li key={name}>
+                                <span>{name}</span>
+                                <button onClick={() => props.onRemoveFriend(name)}>remove</button>
+                                <button onClick={() => props.onAddInactiveFriend(name)}>inactive friend</button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+
+        function InactiveFriendsList(props){
+            return(
+                <div>
+                    <h1>Inactive Friends</h1>
+                    <ul>
+                        {props.list.map((name) =>(
+                            <li key={name}>
+                                <span>{name}</span>
+                                <button onClick={() => props.onRemoveInactiveFriend(name)}>remove</button>
+                                <button onClick={() => props.onAddActiveFriend(name)}>active friend</button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
+
+        class App extends React.Component {
+            constructor(props){
+                super(props)
+                this.state = {
+                    friends: ['jordan', 'mike', 'jake'],
+                    inactiveFriends: ['mary', 'peter'],
+                    input: ''
+                }
+
+                this.handleAddFriend = this.handleAddFriend.bind(this)
+                this.handleRemoveFriend = this.handleRemoveFriend.bind(this)
+                this.updateInput = this.updateInput.bind(this)
+                this.handleClearAllFriends = this.handleClearAllFriends.bind(this)
+
+                this.handleAddInactiveFriend = this.handleAddInactiveFriend.bind(this)
+                this.handleAddActiveFriend = this.handleAddActiveFriend.bind(this)
+                this.handleRemoveInactiveFriend = this.handleRemoveInactiveFriend.bind(this)
+                // this.updateInactiveFriendInput = this.updateInactiveFriendInput.bind(this)
+                // this.handleClearAllInactiveFriends = this.handleClearAllInactiveFriends.bind(this)
+
+            }
+
+            
+            handleAddFriend(){
+                if(this.state.input.trim().length == 0){
+                    console.log('n tem nd')
+                    return;
+                }
+                this.setState((currentState) => {
+                    return {
+                     friends: currentState.friends.concat([this.state.input]),
+                     input: ''  
+                    }
+                })
+            }
+
+            handleAddActiveFriend(name){
+                this.setState((currentState) => {
+                    return{
+                        inactiveFriends: currentState.inactiveFriends.filter((friend)=>friend !== name),
+                        friends: currentState.friends.concat([name])
+                    }
+                })
+            }
+
+            handleAddInactiveFriend(name){
+                this.setState((currentState)=>{
+                    return{
+                        inactiveFriends: currentState.inactiveFriends.concat([name]),
+                        friends: currentState.friends.filter((friends)=>friends !== name)
+                    }
+                })
+            }
+
+            handleRemoveFriend(name){
+                this.setState((currentState) => {
+                    return {
+                        friends: currentState.friends.filter((friend) => friend !== name),
+                    }
+                })
+            }
+
+            handleRemoveInactiveFriend(name){
+                this.setState((currentState) => {
+                    return { 
+                        inactiveFriends: currentState.inactiveFriends.filter((friend)=> friend !== name)
+                    }
+                })
+            }
+
+            handleClearAllFriends(){
+                this.setState({
+                    friends: [],
+                    inactiveFriends: []
+                })
+            }
+            
+            updateInput(e){
+                const value = e.target.value
+
+                //nesse caso n se esta proecupado c o valor anterior da variavel
+                //entao faz assim
+                this.setState({
+                    input: value
+                })
+                // caso se importa c o valor anterior da variavel faz assim
+                // this.setState((currentState)=>{
+                //     input: value
+                // })
+            }
+            render(){
+                return (
+                    <div>
+                        <input type="text" onChange={this.updateInput}  value={this.state.input} placeholder="type a name"></input>
+                        <button onClick={()=> this.handleAddFriend()}>add</button>
+                        <button onClick={()=> this.handleClearAllFriends()}>clear all</button>
+
+                        <FriendsList list={this.state.friends} 
+                        onRemoveFriend={this.handleRemoveFriend}
+                        onAddInactiveFriend={this.handleAddInactiveFriend}/>
+
+                        <InactiveFriendsList list={this.state.inactiveFriends} 
+                        onRemoveInactiveFriend={this.handleRemoveInactiveFriend}
+                        onAddActiveFriend={this.handleAddActiveFriend}/>
+                    </div>
+                    
+                )
+            }
+        }
+
+        // function App(){
+        //     const friends = ['jordan', 'mike', 'jake']
+        //     return (
+
+        //         // <div id='container'>
+        //         //     <NameComponent name={name} />
+        //         //     <HandleComponent handler={handle} />
+        //         // </div>
+        //         <div>
+        //             <FriendsList list={friends} />
+        //         </div>
+        //     )
+        // }
+
+        // const wrapperElement = React.createElement(
+        //     'div',
+        //     {id: 'container'},
+        //     React.createElement(NameComponent, {name:'ko'}),
+        //     React.createElement(HandleComponent, {handler:'@kokko'}),
+        // )
+        ReactDOM.render(
+            <App />,
+            document.getElementById('app')
+        )
+    </script>
+</body>
+</html>
